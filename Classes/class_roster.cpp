@@ -1,3 +1,8 @@
+#include <iostream>
+using std::cin;
+using std::cout;
+using namespace std;
+
 class studentRecord{
 public:
 	studentRecord();
@@ -38,15 +43,16 @@ int studentRecord::studentID(){
 }
 
 void studentRecord::setStudentID(int newID){
-	if(newGrade >= -1)
+	if(newID >= -1){
 		_studentID = newID;
+	}
 }
 
-int studentRecord::name(){
+string studentRecord::name(){
 	return _name;
 }
 
-void studentRecord::setName(int newName){
+void studentRecord::setName(string newName){
 	_name = newName;
 }
 
@@ -73,3 +79,119 @@ string studentRecord::letterGrade(){
 	return GRADE_LETTER[category - 1];
 }
 
+class studentCollection {
+private:
+struct studentNode {
+	studentRecord studentData;
+	studentNode * next;
+};
+public:
+	studentCollection();
+	~studentCollection();
+	studentCollection(const studentCollection &original);
+	studentCollection& operator=(const studentCollection& rhs);
+	void addRecord(studentRecord newStudent);
+	studentRecord recordWithNumber(int idNum);
+	void removeRecord(int idNum);
+private:
+	typedef studentNode * studentList;
+	studentList _listHead;
+	void deleteList(studentList &listPtr);
+	studentList copiedList(const studentList original);
+};
+
+studentCollection::studentCollection(){
+	_listHead = NULL;
+}
+
+void studentCollection::addRecord(studentRecord newStudent) {
+	studentNode * newNode = new studentNode;
+	newNode->studentData = newStudent;
+	newNode->next = _listHead;
+	_listHead = newNode;
+}
+
+studentRecord studentCollection::recordWithNumber(int idNum){
+	studentNode* loopPtr = _listHead;
+	while(loopPtr != NULL && loopPtr->studentData.studentID() != idNum){
+		loopPtr = loopPtr->next;
+	}
+	if(loopPtr == NULL){
+		studentRecord dummyRecord(-1, -1, "");
+	}else{
+		return loopPtr->studentData;		
+	}
+}
+
+void studentCollection::removeRecord(int idNum){
+	studentNode* loopPtr = _listHead;
+	studentNode* trailing = NULL;
+	while(loopPtr != NULL && loopPtr->studentData.studentID() != idNum){
+		trailing = loopPtr;
+		loopPtr = loopPtr->next;
+	}
+	if(loopPtr == NULL) return;
+	if(trailing == NULL){
+		_listHead = _listHead->next;
+	}else{
+		trailing->next = loopPtr->next;
+	}
+	delete loopPtr;
+}
+
+void studentCollection::deleteList(studentList &listPtr){
+	while(listPtr != NULL){
+		studentNode* temp = listPtr;
+		listPtr = listPtr->next;
+		delete temp;
+	}
+}
+
+studentCollection::~studentCollection(){
+	deleteList(_listHead);
+}
+
+studentCollection::studentList studentCollection::copiedList(const studentList original){
+	if(original == NULL){
+		return NULL;
+	}
+	studentList newList = new studentNode;
+	newList->studentData = original->studentData;
+	studentNode* oldLoopPtr = original->next;
+	studentNode* newLoopPtr = newList;
+	while(oldLoopPtr != NULL){
+		newLoopPtr->next = new studentNode;
+		newLoopPtr = newLoopPtr->next;
+		newLoopPtr->studentData = oldLoopPtr->studentData;
+		oldLoopPtr = oldLoopPtr->next;
+	}
+	newLoopPtr->next = NULL;
+	return newList;
+}
+
+studentCollection& studentCollection::operator=(const studentCollection &rhs){
+	if(this != &rhs){
+		deleteList(_listHead);
+		_listHead = copiedList(rhs._listHead);
+	}
+	return *this;
+}
+
+studentCollection::studentCollection(const studentCollection &original){
+	_listHead = copiedList(original._listHead);
+}
+
+int main(){
+
+	studentCollection s;
+	studentRecord stu3(84, 1152, "Sue");
+	studentRecord stu2(75, 4875, "Ed");
+	studentRecord stu1(98, 2938, "Todd");
+	s.addRecord(stu3);
+	s.addRecord(stu2);
+	s.addRecord(stu1);
+	s.removeRecord(4875);
+
+	studentCollection s2(s);
+	return 0;
+}
