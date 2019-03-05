@@ -21,7 +21,7 @@ list<string> readWordFile(char* filename){
 	char currentWord[30];
 	while(wordFile >> currentWord){
 		if(strchr(currentWord, '\'') == 0){
-			strin temp(currentWord);
+			string temp(currentWord);
 			wordList.push_back(temp);
 		}
 	}
@@ -43,7 +43,7 @@ int countWordsWithoutLetter(const list<string>& wordList, char letter){
 	int count = 0;
 	iter = wordList.begin();
 	while(iter != wordList.end()){
-		if(iter->find(letter) == strin::npos){
+		if(iter->find(letter) == string::npos){
 			count++;
 		}
 		iter++;
@@ -150,7 +150,7 @@ void mostFreqPatternByLetter(list<string> wordList, char letter,
 void diplayGuessedLetter(bool letters[26]){
 	cout << "Letters guessed: ";
 	for(int i = 0; i < 26; i++){
-		if(letter[i]) cout << (char)('a' + i) << " ";
+		if(letters[i]) cout << (char)('a' + i) << " ";
 	}
 	cout << "\n";
 }
@@ -161,7 +161,7 @@ int main(){
 	const int maxMisses = 9;
 	int misses = 0;
 	int discoveredLetterCount = 0;
-	removeWordsOfWrongLength(wordlist, wordLength);
+	removeWordsOfWrongLength(wordList, wordLength);
 	char revealedWord[wordLength + 1] = "********";
 	bool guessedLetters[26];
 	for(int i = 0; i < 26; i++) guessedLetters[i] = false;
