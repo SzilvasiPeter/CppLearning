@@ -51,7 +51,7 @@ AutoMobile::AutoMobile(string name, string modelName, int modelYear){
 int main(){
 
 	AutoMobile autoMobile("Bug", "Wolsvagen", 1998);
-	autoMobile.toString();
+	autoMobile.toString();	
 
 	return 0;
 }
